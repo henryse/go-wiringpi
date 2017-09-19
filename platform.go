@@ -71,15 +71,6 @@ var (
 	}
 )
 
-// Used to test if we are running on a raspberry pi
-func IsRaspberryPi() bool{
-	if _, err := os.Stat("/opt/vc/include/bcm_host.h"); os.IsNotExist(err) {
-		return false
-	}
-
-	return true
-}
-
 //use RPi.GPIO's BOARD numbering
 func BoardToPin(pin int) int {
 	if pin < 1 || pin >= len(board2pin) {
@@ -93,4 +84,13 @@ func GpioToPin(pin int) int {
 		panic(fmt.Sprintf("Invalid bcm gpio number: %d", pin))
 	}
 	return gpio2pin[pin]
+}
+
+// Used to test if we are running on a raspberry pi
+func IsRaspberryPi() bool{
+	if _, err := os.Stat("/opt/vc/include/bcm_host.h"); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
 }

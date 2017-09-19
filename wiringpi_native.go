@@ -92,14 +92,12 @@ static void init(void *p) {
 	callback_func = p;
 }
 */
-
 import "C"
 import "unsafe"
 
 import (
 	"github.com/henryse/go-callback"
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -155,11 +153,12 @@ const (
 	INT_EDGE_BOTH    = C.INT_EDGE_BOTH
 )
 
+var mutex = &sync.Mutex{}
+
+
 func PinToGpio(pin int) int {
 	return int(C.wpiPinToGpio(C.int(pin)))
 }
-
-var mutex = &sync.Mutex{}
 
 func WiringPiSetup() error {
 	if -1 == int(C.wiringPiSetup()) {
@@ -188,7 +187,7 @@ func DelayMicroseconds(microSec int) {
 	C.delayMicroseconds(C.uint(microSec))
 }
 
-func WiringPiISR(pin int, mode int) chan int {
+func WiringISR(pin int, mode int) chan int {
 	mutex.Lock()
 	defer mutex.Unlock()
 	if interrupt_chans[pin] == nil {
@@ -204,11 +203,8 @@ func init() {
 
 var interrupt_chans = [64]chan int{}
 
+//export goCallback
 func goCallback(arg unsafe.Pointer) {
 	ctxt := (*C.context)(arg)
 	interrupt_chans[int(ctxt.pin)] <- int(ctxt.ret)
-}
-
-func IsRaspberryPiEmulator() bool{
-	return false
 }

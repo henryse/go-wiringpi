@@ -90,15 +90,11 @@ func DelayMicroseconds(microSec int) {
 	time.Sleep(time.Duration(microSec) * time.Microsecond)
 }
 
-func WiringPiISR(pin int, mode int) chan int {
+func WiringISR(pin int, mode int) chan int {
 	// TODO: Need code
 	return nil
 }
 
 func init() {
 	// TODO: Need code
-}
-
-func IsRaspberryPiEmulator() bool{
-	return true
 }
