@@ -121,7 +121,59 @@ func GpioToPin(pin int) int {
 	return gpio2pin[pin]
 }
 
-// Used to test if we are running on a raspberry pi
+func PinToGpio(pin int) int {
+	return internalPinToGpio(pin)
+}
+
+func Setup() error {
+	return internalSetup()
+}
+
+func PinMode(pin int, mode int) {
+	internalPinMode(pin, mode)
+}
+
+func DigitalWrite(pin int, mode int) {
+	internalDigitalWrite(pin, mode)
+}
+
+func DigitalRead(pin int) int {
+	return internalDigitalRead(pin)
+}
+
+func DigitalReadStr(pin int) string {
+	if internalDigitalRead(pin) == LOW {
+		return "LOW"
+	}
+	return "HIGH"
+}
+
+func GetMode(pin int) int {
+	return internalGetMode(pin)
+}
+
+func GetModeStr(pin int) string {
+	var mode = internalGetMode(pin)
+
+	if mode > len(gpioModes) {
+		return "INVALID"
+	}
+
+	return gpioModes[GetMode(pin)]
+}
+
+func Delay(ms int) {
+	internalDelay(ms)
+}
+
+func DelayMicroseconds(microSec int) {
+	internalDelayMicroseconds(microSec)
+}
+
+func WiringISR(pin int, mode int) chan int {
+	return internalWiringISR(pin, mode)
+}
+
 func IsRaspberryPi() bool{
 	if _, err := os.Stat("/opt/vc/include/bcm_host.h"); os.IsNotExist(err) {
 		return false

@@ -131,59 +131,42 @@ const (
 
 var mutex = &sync.Mutex{}
 
-func PinToGpio(pin int) int {
+func internalPinToGpio(pin int) int {
 	return int(C.wpiPinToGpio(C.int(pin)))
 }
 
-func Setup() error {
+func internalSetup() error {
 	if -1 == int(C.wiringPiSetup()) {
 		return errors.New("wiringPiSetup failed to call")
 	}
 	return nil
 }
 
-func PinMode(pin int, mode int) {
+func internalPinMode(pin int, mode int) {
 	C.native_pin_mode(C.int(pin), C.int(mode))
 }
 
-func DigitalWrite(pin int, mode int) {
+func internalDigitalWrite(pin int, mode int) {
 	C.native_digital_write(C.int(pin), C.int(mode))
 }
 
-func DigitalRead(pin int) int {
+func internalDigitalRead(pin int) int {
 	return int(C.native_digital_read(C.int(pin)))
 }
 
-func DigitalReadStr(pin int) string {
-	if DigitalRead(pin) == LOW {
-		return "LOW"
-	}
-	return "HIGH"
-}
-
-func GetMode(pin int) int {
+func internalGetMode(pin int) int {
 	return int(C.getAlt(C.int(pin)))
 }
 
-func GetModeStr(pin int) string {
-	var mode = GetMode(pin)
-
-	if mode > len(gpioModes) {
-		return "INVALID"
-	}
-
-	return gpioModes[GetMode(pin)]
-}
-
-func Delay(ms int) {
+func internalDelay(ms int) {
 	C.delay(C.uint(ms))
 }
 
-func DelayMicroseconds(microSec int) {
+func internalDelayMicroseconds(microSec int) {
 	C.delayMicroseconds(C.uint(microSec))
 }
 
-func WiringISR(pin int, mode int) chan int {
+func internalWiringISR(pin int, mode int) chan int {
 	mutex.Lock()
 	defer mutex.Unlock()
 	if interrupt_channels[pin] == nil {

@@ -44,11 +44,11 @@ var(
 	gpio_mode_list [gpio_pin_count]int
 )
 
-func PinToGpio(_ int) int {
+func internalPinToGpio(_ int) int {
 	return 0
 }
 
-func Setup() error {
+func internalSetup() error {
 	log.Println("Warning: Running in emulation mode")
 
 	for i:= 0; i < gpio_pin_count; i++ {
@@ -59,19 +59,19 @@ func Setup() error {
 	return nil
 }
 
-func PinMode(pin int, mode int) {
+func internalPinMode(pin int, mode int) {
 	if pin < gpio_pin_count {
 		gpio_mode_list[pin] = mode
 	}
 }
 
-func DigitalWrite(pin int, mode int) {
+func internalDigitalWrite(pin int, mode int) {
 	if pin < gpio_pin_count {
 		gpio_list[pin] = mode
 	}
 }
 
-func DigitalRead(pin int) int {
+func internalDigitalRead(pin int) int {
 	if pin < gpio_pin_count {
 		return gpio_list[pin]
 	}
@@ -79,14 +79,7 @@ func DigitalRead(pin int) int {
 	return LOW
 }
 
-func DigitalReadStr(pin int) string {
-	if DigitalRead(pin) == LOW {
-		return "LOW"
-	}
-	return "HIGH"
-}
-
-func GetMode(pin int) int {
+func internalGetMode(pin int) int {
 	if pin < gpio_pin_count {
 		return gpio_mode_list[pin]
 	}
@@ -94,25 +87,15 @@ func GetMode(pin int) int {
 	return MODE_IN
 }
 
-func GetModeStr(pin int) string {
-	var mode = GetMode(pin)
-
-	if mode > len(gpioModes) {
-		return "INVALID"
-	}
-
-	return gpioModes[GetMode(pin)]
-}
-
-func Delay(ms int) {
+func internalDelay(ms int) {
 	time.Sleep(time.Duration(ms) * time.Millisecond)
 }
 
-func DelayMicroseconds(microSec int) {
+func internalDelayMicroseconds(microSec int) {
 	time.Sleep(time.Duration(microSec) * time.Microsecond)
 }
 
-func WiringISR(pin int, mode int) chan int {
+func internalWiringISR(pin int, mode int) chan int {
 	if pin < gpio_pin_count {
 		gpio_list[pin] = mode
 	}
