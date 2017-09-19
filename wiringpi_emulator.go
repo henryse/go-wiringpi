@@ -90,6 +90,8 @@ func GetMode(pin int) int {
 	if pin < gpio_pin_count {
 		return gpio_mode_list[pin]
 	}
+
+	return MODE_IN
 }
 
 func GetModeStr(pin int) string {
