@@ -4,6 +4,7 @@ package wiringpi
 
 import (
 	"time"
+	"log"
 )
 
 //noinspection ALL
@@ -33,29 +34,49 @@ const (
 	INT_EDGE_FALLING = 1
 	INT_EDGE_RISING  = 2
 	INT_EDGE_BOTH    = 3
+
+	// Used for emulator:
+	gpio_pin_count = 26
+)
+
+var(
+	gpio_list [gpio_pin_count]int
+	gpio_mode_list [gpio_pin_count]int
 )
 
 func PinToGpio(pin int) int {
-	// TODO: Need code
 	return 0
 }
 
-func WiringPiSetup() error {
-	// TODO: Need code
+func Setup() error {
+	log.Println("Warning: Running in emulation mode")
+
+	for i:= 0; i < gpio_pin_count; i++ {
+		gpio_list[i] = LOW
+		gpio_mode_list[i] = MODE_IN
+	}
+
 	return nil
 }
 
 func PinMode(pin int, mode int) {
-	// TODO: Need code
+	if pin < gpio_pin_count {
+		gpio_mode_list[pin] = mode
+	}
 }
 
 func DigitalWrite(pin int, mode int) {
-	// TODO: Need code
+	if pin < gpio_pin_count {
+		gpio_list[pin] = mode
+	}
 }
 
 func DigitalRead(pin int) int {
-	// TODO: Need code
-	return 0
+	if pin < gpio_pin_count {
+		return gpio_list[pin]
+	}
+
+	return LOW
 }
 
 func DigitalReadStr(pin int) string {
@@ -66,7 +87,9 @@ func DigitalReadStr(pin int) string {
 }
 
 func GetMode(pin int) int {
-	return 0
+	if pin < gpio_pin_count {
+		return gpio_mode_list[pin]
+	}
 }
 
 func GetModeStr(pin int) string {
@@ -88,10 +111,8 @@ func DelayMicroseconds(microSec int) {
 }
 
 func WiringISR(pin int, mode int) chan int {
-	// TODO: Need code
+	if pin < gpio_pin_count {
+		gpio_list[pin] = mode
+	}
 	return nil
-}
-
-func init() {
-	// TODO: Need code
 }

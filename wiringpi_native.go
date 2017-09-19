@@ -135,7 +135,7 @@ func PinToGpio(pin int) int {
 	return int(C.wpiPinToGpio(C.int(pin)))
 }
 
-func WiringPiSetup() error {
+func Setup() error {
 	if -1 == int(C.wiringPiSetup()) {
 		return errors.New("wiringPiSetup failed to call")
 	}
