@@ -102,36 +102,14 @@ import (
 )
 
 const (
-	PIN_GPIO_0  = 0
-	PIN_GPIO_1  = 1
-	PIN_GPIO_2  = 2
-	PIN_GPIO_3  = 3
-	PIN_GPIO_4  = 4
-	PIN_GPIO_5  = 5
-	PIN_GPIO_6  = 6
-	PIN_GPIO_7  = 7
-	PIN_SDA     = 8
-	PIN_SCL     = 9
-	PIN_CE0     = 10
-	PIN_CE1     = 11
-	PIN_MOSI    = 12
-	PIN_MOSO    = 13
-	PIN_SCLK    = 14
-	PIN_TXD     = 15
-	PIN_RXD     = 16
-	PIN_GPIO_8  = 17
-	PIN_GPIO_9  = 18
-	PIN_GPIO_10 = 19
-	PIN_GPIO_11 = 20
-
 	WPI_MODE_PINS          = C.WPI_MODE_PINS
 	WPI_MODE_GPIO          = C.WPI_MODE_GPIO
 	WPI_MODE_GPIO_SYS      = C.WPI_MODE_GPIO_SYS
 	WPI_MODE_PIFACE        = C.WPI_MODE_PIFACE
 	WPI_MODE_UNINITIALISED = C.WPI_MODE_UNINITIALISED
 
-	OUTPUT     = C.OUTPUT
 	INPUT      = C.INPUT
+	OUTPUT     = C.OUTPUT
 	PWM_OUTPUT = C.PWM_OUTPUT
 	GPIO_CLOCK = C.GPIO_CLOCK
 
@@ -141,8 +119,6 @@ const (
 	PUD_OFF  = C.PUD_OFF
 	PUD_DOWN = C.PUD_DOWN
 	PUD_UP   = C.PUD_UP
-
-	// PWM
 
 	PWM_MODE_MS  = C.PWM_MODE_MS
 	PWM_MODE_BAL = C.PWM_MODE_BAL
@@ -154,7 +130,6 @@ const (
 )
 
 var mutex = &sync.Mutex{}
-
 
 func PinToGpio(pin int) int {
 	return int(C.wpiPinToGpio(C.int(pin)))
@@ -177,6 +152,27 @@ func DigitalWrite(pin int, mode int) {
 
 func DigitalRead(pin int) int {
 	return int(C.native_digital_read(C.int(pin)))
+}
+
+func DigitalReadStr(pin int) string {
+	if DigitalRead(pin) == LOW {
+		return "LOW"
+	}
+	return "HIGH"
+}
+
+func GetMode(pin int) int {
+	return C.getAlt(pin)
+}
+
+func GetModeStr(pin int) string {
+	var mode = GetMode(pin)
+
+	if mode > len(gpioModes) {
+		return "INVALID"
+	}
+
+	return gpioModes[GetMode(pin)]
 }
 
 func Delay(ms int) {
