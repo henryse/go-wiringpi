@@ -44,7 +44,7 @@ var(
 	gpio_mode_list [gpio_pin_count]int
 )
 
-func PinToGpio(pin int) int {
+func PinToGpio(_ int) int {
 	return 0
 }
 

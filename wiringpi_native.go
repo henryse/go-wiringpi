@@ -186,21 +186,21 @@ func DelayMicroseconds(microSec int) {
 func WiringISR(pin int, mode int) chan int {
 	mutex.Lock()
 	defer mutex.Unlock()
-	if interrupt_chans[pin] == nil {
-		interrupt_chans[pin] = make(chan int)
+	if interrupt_channels[pin] == nil {
+		interrupt_channels[pin] = make(chan int)
 	}
 	C.native_wiring_isr(C.int(pin), C.int(mode))
-	return interrupt_chans[pin]
+	return interrupt_channels[pin]
 }
 
 func init() {
 	C.init(callback.Func)
 }
 
-var interrupt_chans = [64]chan int{}
+var interrupt_channels = [64]chan int{}
 
 //export goCallback
 func goCallback(arg unsafe.Pointer) {
 	ctxt := (*C.context)(arg)
-	interrupt_chans[int(ctxt.pin)] <- int(ctxt.ret)
+	interrupt_channels[int(ctxt.pin)] <- int(ctxt.ret)
 }
