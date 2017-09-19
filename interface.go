@@ -73,6 +73,7 @@ var (
 	gpioModes = []string  {"IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"}
 )
 
+//noinspection GoUnusedConst
 const (
 	PIN_GPIO_0  = 0
 	PIN_GPIO_1  = 1
@@ -107,6 +108,7 @@ const (
 )
 
 //use RPi.GPIO's BOARD numbering
+//noinspection GoUnusedExportedFunction
 func BoardToPin(pin int) int {
 	if pin < 1 || pin >= len(board2pin) {
 		panic(fmt.Sprintf("Invalid board pin number: %d", pin))
@@ -114,6 +116,7 @@ func BoardToPin(pin int) int {
 	return board2pin[pin]
 }
 
+//noinspection GoUnusedExportedFunction
 func GpioToPin(pin int) int {
 	if pin < 0 || pin >= len(gpio2pin) {
 		panic(fmt.Sprintf("Invalid bcm gpio number: %d", pin))
@@ -121,26 +124,32 @@ func GpioToPin(pin int) int {
 	return gpio2pin[pin]
 }
 
+//noinspection GoUnusedExportedFunction
 func PinToGpio(pin int) int {
 	return internalPinToGpio(pin)
 }
 
+//noinspection GoUnusedExportedFunction
 func Setup() error {
 	return internalSetup()
 }
 
+//noinspection GoUnusedExportedFunction
 func PinMode(pin int, mode int) {
 	internalPinMode(pin, mode)
 }
 
+//noinspection GoUnusedExportedFunction
 func DigitalWrite(pin int, mode int) {
 	internalDigitalWrite(pin, mode)
 }
 
+//noinspection GoUnusedExportedFunction
 func DigitalRead(pin int) int {
 	return internalDigitalRead(pin)
 }
 
+//noinspection GoUnusedExportedFunction
 func DigitalReadStr(pin int) string {
 	if internalDigitalRead(pin) == LOW {
 		return "LOW"
@@ -152,6 +161,7 @@ func GetMode(pin int) int {
 	return internalGetMode(pin)
 }
 
+//noinspection GoUnusedExportedFunction
 func GetModeStr(pin int) string {
 	var mode = internalGetMode(pin)
 
@@ -162,14 +172,17 @@ func GetModeStr(pin int) string {
 	return gpioModes[GetMode(pin)]
 }
 
+//noinspection GoUnusedExportedFunction
 func Delay(ms int) {
 	internalDelay(ms)
 }
 
+//noinspection GoUnusedExportedFunction
 func DelayMicroseconds(microSec int) {
 	internalDelayMicroseconds(microSec)
 }
 
+//noinspection GoUnusedExportedFunction
 func WiringISR(pin int, mode int) chan int {
 	return internalWiringISR(pin, mode)
 }
