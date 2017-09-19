@@ -162,7 +162,7 @@ func DigitalReadStr(pin int) string {
 }
 
 func GetMode(pin int) int {
-	return C.getAlt(pin)
+	return int(C.getAlt(C.int(pin)))
 }
 
 func GetModeStr(pin int) string {
