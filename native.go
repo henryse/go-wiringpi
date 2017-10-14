@@ -113,9 +113,6 @@ import "unsafe"
 import (
 	"github.com/henryse/go-callback"
 	"sync"
-	"fmt"
-	"os"
-	"bufio"
 )
 
 const (
