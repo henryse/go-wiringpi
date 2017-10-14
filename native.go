@@ -113,7 +113,9 @@ import "unsafe"
 import (
 	"github.com/henryse/go-callback"
 	"sync"
+	"fmt"
 	"os"
+	"bufio"
 )
 
 const (
@@ -150,7 +152,7 @@ func internalPinToGpio(pin int) int {
 	return int(C.wpiPinToGpio(C.int(pin)))
 }
 
-func internalSetup() error {
+func internalSetup() int {
 	return int(C.wiringPiSetup())
 }
 
@@ -223,7 +225,7 @@ func goCallback(arg unsafe.Pointer) {
 func internalGetPiRevision() int {
 	inFile, err := os.Open("/proc/cpuinfo")
 	if err != nil {
-		fmt.Println(err.Error() + `: ` + path)
+		fmt.Println(err.Error() + `: ` + inFile)
 		return
 	} else {
 		defer inFile.Close()
@@ -246,7 +248,7 @@ func internalGetPiRevision() int {
 // error – in which case, you can consult errno as usual.
 //
 func internalSetupI2C(devId int) int {
-	return int(C.wiringPiI2CSetup(C.int(defId)))
+	return int(C.wiringPiI2CSetup(C.int(devId)))
 }
 
 // Simple device read. Some devices present data when you read them
@@ -255,5 +257,3 @@ func internalSetupI2C(devId int) int {
 func internalI2CRead(fd int) int {
 	return int(C.wiringPiI2CRead(C.int(fd)))
 }
-
-
