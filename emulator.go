@@ -1,10 +1,37 @@
 // +build !linux, !arm
 
+// **********************************************************************
+//    Copyright (c) 2017 Henry Seurer
+//
+//   Permission is hereby granted, free of charge, to any person
+//    obtaining a copy of this software and associated documentation
+//    files (the "Software"), to deal in the Software without
+//    restriction, including without limitation the rights to use,
+//    copy, modify, merge, publish, distribute, sublicense, and/or sell
+//    copies of the Software, and to permit persons to whom the
+//    Software is furnished to do so, subject to the following
+//    conditions:
+//
+//   The above copyright notice and this permission notice shall be
+//   included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+//    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+//    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+//    OTHER DEALINGS IN THE SOFTWARE.
+//
+// **********************************************************************
+
 package wiringpi
 
 import (
 	"time"
 	"log"
+	"fmt"
 )
 
 //noinspection ALL
@@ -48,7 +75,7 @@ func internalPinToGpio(_ int) int {
 	return 0
 }
 
-func internalSetup() error {
+func internalSetup() int {
 	log.Println("Warning: Running in emulation mode")
 
 	for i:= 0; i < gpio_pin_count; i++ {
@@ -56,12 +83,47 @@ func internalSetup() error {
 		gpio_mode_list[i] = MODE_IN
 	}
 
-	return nil
+	return 0
+}
+
+func internalSetupGpio() int {
+	return 0
+}
+
+func internalSetupPhys() int {
+	return 0
+}
+
+func internalSetupSys() int {
+	return 0
 }
 
 func internalPinMode(pin int, mode int) {
 	if pin < gpio_pin_count {
 		gpio_mode_list[pin] = mode
+	}
+}
+
+func internalPullUpDnControl(pin int, pud int){
+	switch pud {
+	case PUD_OFF:
+		fmt.Println("PUD_OFF")
+	case PUD_UP:
+		fmt.Println("PUD_UP")
+	case PUD_DOWN:
+		fmt.Println("PUD_DOWN")
+	default:
+		fmt.Printf("Error invliad pud: %d\n", pud)
+	}
+
+	if pin < gpio_pin_count {
+		gpio_mode_list[pin] = pud
+	}
+}
+
+func internalPwmWrite (pin int, value int) {
+	if pin < gpio_pin_count {
+		gpio_mode_list[pin] = value
 	}
 }
 
@@ -100,4 +162,15 @@ func internalWiringISR(pin int, mode int) chan int {
 		gpio_list[pin] = mode
 	}
 	return nil
+}
+
+func internalSetupI2C(_ int) int {
+	return -1
+}
+
+// Simple device read. Some devices present data when you read them
+// without having to do any register transactions.
+//
+func internalI2CRead(_ int) int {
+	return 0
 }

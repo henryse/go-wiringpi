@@ -1,3 +1,29 @@
+// **********************************************************************
+//    Copyright (c) 2017 Henry Seurer
+//
+//   Permission is hereby granted, free of charge, to any person
+//    obtaining a copy of this software and associated documentation
+//    files (the "Software"), to deal in the Software without
+//    restriction, including without limitation the rights to use,
+//    copy, modify, merge, publish, distribute, sublicense, and/or sell
+//    copies of the Software, and to permit persons to whom the
+//    Software is furnished to do so, subject to the following
+//    conditions:
+//
+//   The above copyright notice and this permission notice shall be
+//   included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+//    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+//    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+//    OTHER DEALINGS IN THE SOFTWARE.
+//
+// **********************************************************************
+
 package wiringpi
 
 import (
@@ -129,25 +155,102 @@ func PinToGpio(pin int) int {
 	return internalPinToGpio(pin)
 }
 
+// This initialises wiringPi and assumes that the calling program is going to be using the wiringPi pin numbering scheme.
+// This is a simplified numbering scheme which provides a mapping from virtual pin numbers 0 through 16 to the real
+// underlying Broadcom GPIO pin numbers. See the pins page for a table which maps the wiringPi pin number to the
+// Broadcom GPIO pin number to the physical location on the edge connector.
+//
+// This function needs to be called with root privileges.
+//
 //noinspection GoUnusedExportedFunction
-func Setup() error {
+func Setup() int {
 	return internalSetup()
 }
 
+
+//This is identical to above, however it allows the calling programs to use the Broadcom GPIO pin numbers
+// directly with no re-mapping.
+//
+// As above, this function needs to be called with root privileges, and note that some pins are different
+// from revision 1 to revision 2 boards.
+//
+//noinspection GoUnusedExportedFunction
+func SetupGpio() int {
+	return internalSetupGpio()
+}
+
+// Identical to above, however it allows the calling programs to use the physical pin numbers on the P1 connector only.
+//
+// As above, this function needs to be called with root privileges.
+//
+//noinspection GoUnusedExportedFunction
+func SetupPhys() int {
+	return internalSetupPhys()
+}
+
+// This initialises wiringPi but uses the /sys/class/gpio interface rather than accessing the hardware directly.
+// This can be called as a non-root user provided the GPIO pins have been exported before-hand using the gpio program.
+// Pin numbering in this mode is the native Broadcom GPIO numbers – the same as wiringPiSetupGpio() above, so be
+// aware of the differences between Rev 1 and Rev 2 boards.
+//
+// Note: In this mode you can only use the pins which have been exported via the /sys/class/gpio interface
+// before you run your program. You can do this in a separate shell-script, or by using the system() function
+// from inside your program to call the gpio program.
+//
+//Also note that some functions have no effect when using this mode as they’re not currently possible to action unless called with root privileges. (although you can use system() to call gpio to set/change modes if needed)
+//
+//noinspection GoUnusedExportedFunction
+func SetupSys() int {
+	return internalSetupSys()
+}
+
+// This sets the mode of a pin to either INPUT, OUTPUT, PWM_OUTPUT or GPIO_CLOCK. Note that only wiringPi pin 1
+// (BCM_GPIO 18) supports PWM output and only wiringPi pin 7 (BCM_GPIO 4) supports CLOCK output modes.
+//
+// This function has no effect when in Sys mode. If you need to change the pin mode, then you can do it with the
+// gpio program in a script before you start your program.
+//
 //noinspection GoUnusedExportedFunction
 func PinMode(pin int, mode int) {
 	internalPinMode(pin, mode)
 }
 
+// This sets the pull-up or pull-down resistor mode on the given pin, which should be set as an input. Unlike the
+// Arduino, the BCM2835 has both pull-up an down internal resistors. The parameter pud should be; PUD_OFF, (no pull up/down), PUD_DOWN (pull to ground) or PUD_UP (pull to 3.3v) The internal pull up/down resistors have a value of approximately 50KΩ on the Raspberry Pi.
+//
+// This function has no effect on the Raspberry Pi’s GPIO pins when in Sys mode. If you need to activate a
+// pull-up/pull-down, then you can do it with the gpio program in a script before you start your program.
+//
+//noinspection GoUnusedExportedFunction
+func PullUpDnControl (pin int, pud int) {
+	internalPullUpDnControl(pin, pud)
+}
+
+//Writes the value HIGH or LOW (1 or 0) to the given pin which must have been previously set as an output.
+//
+//WiringPi treats any non-zero number as HIGH, however 0 is the only representation of LOW.
+//
 //noinspection GoUnusedExportedFunction
 func DigitalWrite(pin int, mode int) {
 	internalDigitalWrite(pin, mode)
+}
+
+// Writes the value to the PWM register for the given pin. The Raspberry Pi has one on-board PWM pin, pin 1
+// (BMC_GPIO 18, Phys 12) and the range is 0-1024. Other PWM devices may have other PWM ranges.
+//
+// This function is not able to control the Pi’s on-board PWM when in Sys mode.
+//
+//noinspection GoUnusedExportedFunction
+func PwmWrite (pin int, value int) {
+	internalPwmWrite(pin, value)
 }
 
 //noinspection GoUnusedExportedFunction
 func DigitalRead(pin int) int {
 	return internalDigitalRead(pin)
 }
+
+
 
 //noinspection GoUnusedExportedFunction
 func DigitalReadStr(pin int) string {
@@ -156,6 +259,8 @@ func DigitalReadStr(pin int) string {
 	}
 	return "HIGH"
 }
+
+
 
 func GetMode(pin int) int {
 	return internalGetMode(pin)
@@ -187,10 +292,18 @@ func WiringISR(pin int, mode int) chan int {
 	return internalWiringISR(pin, mode)
 }
 
+//noinspection GoUnusedExportedFunction
 func IsRaspberryPi() bool{
-	if _, err := os.Stat("/opt/vc/include/bcm_host.h"); os.IsNotExist(err) {
-		return false
-	}
+	_, err := os.Stat("/opt/vc/include/bcm_host.h")
+	return os.IsExist(err)
+}
 
-	return true
+//noinspection GoUnusedExportedFunction
+func SetupI2C(devId int) int {
+	return internalSetupI2C(devId)
+}
+
+//noinspection GoUnusedExportedFunction
+func i2cRead(fd int) int {
+	return internalI2CRead(fd)
 }

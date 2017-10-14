@@ -1,11 +1,38 @@
 // +build linux, arm
 
+// **********************************************************************
+//    Copyright (c) 2017 Henry Seurer
+//
+//   Permission is hereby granted, free of charge, to any person
+//    obtaining a copy of this software and associated documentation
+//    files (the "Software"), to deal in the Software without
+//    restriction, including without limitation the rights to use,
+//    copy, modify, merge, publish, distribute, sublicense, and/or sell
+//    copies of the Software, and to permit persons to whom the
+//    Software is furnished to do so, subject to the following
+//    conditions:
+//
+//   The above copyright notice and this permission notice shall be
+//   included in all copies or substantial portions of the Software.
+//
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+//    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+//    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+//    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+//    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+//    OTHER DEALINGS IN THE SOFTWARE.
+//
+// **********************************************************************
+
 package wiringpi
 
 /*
 #cgo LDFLAGS: -lwiringPi
 
 #include <wiringPi.h>
+#include <wiringPiI2C.h>
 #include <stdio.h>
 #include <stdlib.h>
 #define nil ((void*)0)
@@ -22,18 +49,6 @@ struct context {
 	int pin;
 	int ret;
 };
-
-static void native_pin_mode(int p, int m) {
-    pinMode(p,m);
-}
-
-static void native_digital_write(int p, int m) {
-    digitalWrite(p,m);
-}
-
-static int native_digital_read(int p) {
-    return digitalRead(p);
-}
 
 static void(*callback_func)(void (*f)(void*), void*);
 
@@ -99,6 +114,7 @@ import (
 	"github.com/henryse/go-callback"
 	"errors"
 	"sync"
+	"os"
 )
 
 const (
@@ -136,22 +152,39 @@ func internalPinToGpio(pin int) int {
 }
 
 func internalSetup() error {
-	if -1 == int(C.wiringPiSetup()) {
-		return errors.New("wiringPiSetup failed to call")
-	}
-	return nil
+	return int(C.wiringPiSetup())
+}
+
+func internalSetupGpio() int {
+	return int(C.wiringPiSetupGpio())
+}
+
+func internalSetupPhys() int {
+	return int(C.wiringPiSetupPhys())
+}
+
+func internalSetupSys() int {
+	return int(C.wiringPiSetupSys())
 }
 
 func internalPinMode(pin int, mode int) {
-	C.native_pin_mode(C.int(pin), C.int(mode))
+	C.pinMode(C.int(pin), C.int(mode))
+}
+
+func internalPullUpDnControl(pin int, pud int){
+	C.pullUpDnControl(C.int(pin), C.int(pud))
+}
+
+func internalPwmWrite (pin int, value int) {
+	C.pwmWrite(C.int(pin), C.int(value))
 }
 
 func internalDigitalWrite(pin int, mode int) {
-	C.native_digital_write(C.int(pin), C.int(mode))
+	C.digitalWrite(C.int(pin), C.int(mode))
 }
 
 func internalDigitalRead(pin int) int {
-	return int(C.native_digital_read(C.int(pin)))
+	return int(C.digitalRead(C.int(pin)))
 }
 
 func internalGetMode(pin int) int {
@@ -187,3 +220,41 @@ func goCallback(arg unsafe.Pointer) {
 	ctxt := (*C.context)(arg)
 	interrupt_channels[int(ctxt.pin)] <- int(ctxt.ret)
 }
+
+func internalGetPiRevision() int {
+	inFile, err := os.Open("/proc/cpuinfo")
+	if err != nil {
+		fmt.Println(err.Error() + `: ` + path)
+		return
+	} else {
+		defer inFile.Close()
+	}
+
+	scanner := bufio.NewScanner(inFile)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text()) // the line
+	}
+
+}
+
+// This initialises the I2C system with your given device identifier.
+// The ID is the I2C number of the device and you can use the i2cdetect
+// program to find this out. wiringPiI2CSetup() will work out which
+// revision Raspberry Pi you have and open the appropriate device in /dev.
+//
+// The return value is the standard Linux filehandle, or -1 if any
+// error – in which case, you can consult errno as usual.
+//
+func internalSetupI2C(devId int) int {
+	return int(C.wiringPiI2CSetup(C.int(defId)))
+}
+
+// Simple device read. Some devices present data when you read them
+// without having to do any register transactions.
+//
+func internalI2CRead(fd int) int {
+	return int(C.wiringPiI2CRead(C.int(fd)))
+}
+
+
