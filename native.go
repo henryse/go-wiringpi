@@ -222,23 +222,6 @@ func goCallback(arg unsafe.Pointer) {
 	interrupt_channels[int(ctxt.pin)] <- int(ctxt.ret)
 }
 
-func internalGetPiRevision() int {
-	inFile, err := os.Open("/proc/cpuinfo")
-	if err != nil {
-		fmt.Println(err.Error() + `: ` + inFile)
-		return
-	} else {
-		defer inFile.Close()
-	}
-
-	scanner := bufio.NewScanner(inFile)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text()) // the line
-	}
-
-}
-
 // This initialises the I2C system with your given device identifier.
 // The ID is the I2C number of the device and you can use the i2cdetect
 // program to find this out. wiringPiI2CSetup() will work out which

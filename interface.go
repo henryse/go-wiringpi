@@ -304,6 +304,6 @@ func SetupI2C(devId int) int {
 }
 
 //noinspection GoUnusedExportedFunction
-func i2cRead(fd int) int {
+func I2cRead(fd int) int {
 	return internalI2CRead(fd)
 }
