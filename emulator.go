@@ -29,10 +29,9 @@
 package wiringpi
 
 import (
-	"time"
-	"log"
 	"fmt"
-	"bufio"
+	"log"
+	"time"
 )
 
 //noinspection ALL
@@ -67,8 +66,8 @@ const (
 	gpio_pin_count = 26
 )
 
-var(
-	gpio_list [gpio_pin_count]int
+var (
+	gpio_list      [gpio_pin_count]int
 	gpio_mode_list [gpio_pin_count]int
 )
 
@@ -79,7 +78,7 @@ func internalPinToGpio(_ int) int {
 func internalSetup() int {
 	log.Println("Warning: Running in emulation mode")
 
-	for i:= 0; i < gpio_pin_count; i++ {
+	for i := 0; i < gpio_pin_count; i++ {
 		gpio_list[i] = LOW
 		gpio_mode_list[i] = MODE_IN
 	}
@@ -105,7 +104,7 @@ func internalPinMode(pin int, mode int) {
 	}
 }
 
-func internalPullUpDnControl(pin int, pud int){
+func internalPullUpDnControl(pin int, pud int) {
 	switch pud {
 	case PUD_OFF:
 		fmt.Println("PUD_OFF")
@@ -122,7 +121,7 @@ func internalPullUpDnControl(pin int, pud int){
 	}
 }
 
-func internalPwmWrite (pin int, value int) {
+func internalPwmWrite(pin int, value int) {
 	if pin < gpio_pin_count {
 		gpio_mode_list[pin] = value
 	}
