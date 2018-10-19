@@ -27,8 +27,8 @@
 package wiringpi
 
 import (
-	"os"
 	"fmt"
+	"os"
 )
 
 var (
@@ -96,7 +96,7 @@ var (
 		20,
 	}
 
-	gpioModes = []string  {"IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"}
+	gpioModes = []string{"IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"}
 )
 
 //noinspection GoUnusedConst
@@ -123,8 +123,8 @@ const (
 	PIN_GPIO_10 = 19
 	PIN_GPIO_11 = 20
 
-	MODE_IN  = 0
-	MODE_OUT = 1
+	MODE_IN   = 0
+	MODE_OUT  = 1
 	MODE_ALT5 = 2
 	MODE_ALT4 = 3
 	MODE_ALT0 = 4
@@ -166,7 +166,6 @@ func PinToGpio(pin int) int {
 func Setup() int {
 	return internalSetup()
 }
-
 
 //This is identical to above, however it allows the calling programs to use the Broadcom GPIO pin numbers
 // directly with no re-mapping.
@@ -222,7 +221,7 @@ func PinMode(pin int, mode int) {
 // pull-up/pull-down, then you can do it with the gpio program in a script before you start your program.
 //
 //noinspection GoUnusedExportedFunction
-func PullUpDnControl (pin int, pud int) {
+func PullUpDnControl(pin int, pud int) {
 	internalPullUpDnControl(pin, pud)
 }
 
@@ -241,7 +240,7 @@ func DigitalWrite(pin int, mode int) {
 // This function is not able to control the Pi’s on-board PWM when in Sys mode.
 //
 //noinspection GoUnusedExportedFunction
-func PwmWrite (pin int, value int) {
+func PwmWrite(pin int, value int) {
 	internalPwmWrite(pin, value)
 }
 
@@ -250,8 +249,6 @@ func DigitalRead(pin int) int {
 	return internalDigitalRead(pin)
 }
 
-
-
 //noinspection GoUnusedExportedFunction
 func DigitalReadStr(pin int) string {
 	if internalDigitalRead(pin) == LOW {
@@ -259,8 +256,6 @@ func DigitalReadStr(pin int) string {
 	}
 	return "HIGH"
 }
-
-
 
 func GetMode(pin int) int {
 	return internalGetMode(pin)
@@ -293,9 +288,9 @@ func WiringISR(pin int, mode int) chan int {
 }
 
 //noinspection GoUnusedExportedFunction
-func IsRaspberryPi() bool{
+func IsRaspberryPi() bool {
 	_, err := os.Stat("/opt/vc/include/bcm_host.h")
-	return os.IsExist(err)
+	return !os.IsNotExist(err)
 }
 
 //noinspection GoUnusedExportedFunction
