@@ -111,6 +111,7 @@ import "C"
 import "unsafe"
 
 import (
+	"log"
 	"sync"
 )
 
