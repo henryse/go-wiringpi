@@ -111,7 +111,6 @@ import "C"
 import "unsafe"
 
 import (
-	"github.com/henryse/go-callback"
 	"sync"
 )
 
@@ -150,54 +149,67 @@ func internalPinToGpio(pin int) int {
 }
 
 func internalSetup() int {
+	log.Println("Running in native mode: wiringPiSetup")
 	return int(C.wiringPiSetup())
 }
 
 func internalSetupGpio() int {
+	log.Println("Running in native mode: wiringPiSetupGpio")
 	return int(C.wiringPiSetupGpio())
 }
 
 func internalSetupPhys() int {
+	log.Println("Running in native mode: wiringPiSetupPhys")
 	return int(C.wiringPiSetupPhys())
 }
 
 func internalSetupSys() int {
+	log.Println("Running in native mode: wiringPiSetupSys")
 	return int(C.wiringPiSetupSys())
 }
 
 func internalPinMode(pin int, mode int) {
+	log.Println("Running in native mode: pinMode")
 	C.pinMode(C.int(pin), C.int(mode))
 }
 
-func internalPullUpDnControl(pin int, pud int){
+func internalPullUpDnControl(pin int, pud int) {
+	log.Println("Running in native mode: pullUpDnControl")
 	C.pullUpDnControl(C.int(pin), C.int(pud))
 }
 
-func internalPwmWrite (pin int, value int) {
+func internalPwmWrite(pin int, value int) {
+	log.Println("Running in native mode: pwmWrite")
 	C.pwmWrite(C.int(pin), C.int(value))
 }
 
 func internalDigitalWrite(pin int, mode int) {
+	log.Println("Running in native mode: digitalWrite")
 	C.digitalWrite(C.int(pin), C.int(mode))
 }
 
 func internalDigitalRead(pin int) int {
+	log.Println("Running in native mode: digitalRead")
 	return int(C.digitalRead(C.int(pin)))
 }
 
 func internalGetMode(pin int) int {
+	log.Println("Running in native mode: getAlt")
 	return int(C.getAlt(C.int(pin)))
 }
 
 func internalDelay(ms int) {
+	log.Println("Running in native mode: delay")
 	C.delay(C.uint(ms))
 }
 
 func internalDelayMicroseconds(microSec int) {
+	log.Println("Running in native mode: delayMicroseconds")
 	C.delayMicroseconds(C.uint(microSec))
 }
 
 func internalWiringISR(pin int, mode int) chan int {
+	log.Println("Running in native mode: native_wiring_isr")
 	mutex.Lock()
 	defer mutex.Unlock()
 	if interrupt_channels[pin] == nil {
@@ -228,6 +240,7 @@ func goCallback(arg unsafe.Pointer) {
 // error – in which case, you can consult errno as usual.
 //
 func internalSetupI2C(devId int) int {
+	log.Println("Running in native mode: wiringPiI2CSetup")
 	return int(C.wiringPiI2CSetup(C.int(devId)))
 }
 
@@ -235,5 +248,6 @@ func internalSetupI2C(devId int) int {
 // without having to do any register transactions.
 //
 func internalI2CRead(fd int) int {
+	log.Println("Running in native mode: wiringPiI2CRead")
 	return int(C.wiringPiI2CRead(C.int(fd)))
 }
