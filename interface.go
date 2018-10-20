@@ -325,6 +325,6 @@ func MonotonicTime() C.ulonglong {
 }
 
 //noinspection GoUnusedExportedFunction
-func ConvertMonotonicTimeToUSec(time C.uLongLong) int {
+func ConvertMonotonicTimeToUSec(time C.ulonglong) int {
 	return time / 1000
 }
