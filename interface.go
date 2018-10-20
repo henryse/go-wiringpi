@@ -323,3 +323,8 @@ func MonotonicTime() C.ulonglong {
 	C.monotonic_time()
 	return nanoseconds
 }
+
+//noinspection GoUnusedExportedFunction
+func ConvertMonotonicTimeToUSec(time C.uLongLong) int {
+	return time / 1000
+}
