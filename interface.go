@@ -26,6 +26,21 @@
 
 package wiringpi
 
+/*
+#include <time.h>
+#include <stdint.h>
+
+uint64_t as_nanoseconds(struct timespec* ts) {
+    return ts->tv_sec * (uint64_t)1000000000L + ts->tv_nsec;
+}
+
+uint64_t monotonic_time() {
+    struct timespec last_t;
+    clock_gettime(CLOCK_MONOTONIC, &last_t);
+    return as_nanoseconds(&last_t);
+}
+*/
+import "C"
 import (
 	"fmt"
 	"os"
@@ -301,4 +316,9 @@ func SetupI2C(devId int) int {
 //noinspection GoUnusedExportedFunction
 func I2cRead(fd int) int {
 	return internalI2CRead(fd)
+}
+
+//noinspection GoUnusedExportedFunction
+func MonotonicTime() uint64 {
+	return C.monotonic_time()
 }
