@@ -29,11 +29,11 @@ package wiringpi
 /*
 #include <time.h>
 
-unsigned as_nanoseconds(struct timespec* ts) {
-    return ts->tv_sec * (unsigned)1000000000L + ts->tv_nsec;
+unsigned long long as_nanoseconds(struct timespec* ts) {
+    return ts->tv_sec * (unsigned long long)1000000000L + ts->tv_nsec;
 }
 
-unsigned monotonic_time() {
+unsigned long long monotonic_time() {
     struct timespec last_t;
     clock_gettime(CLOCK_MONOTONIC, &last_t);
     return as_nanoseconds(&last_t);
@@ -318,6 +318,8 @@ func I2cRead(fd int) int {
 }
 
 //noinspection GoUnusedExportedFunction
-func MonotonicTime() uint {
-	return C.monotonic_time()
+func MonotonicTime() uint64 {
+	var nanoseconds C.ulonglong
+	nanoseconds = C.monotonic_time()
+	return nanoseconds
 }
