@@ -319,5 +319,7 @@ func I2cRead(fd int) int {
 
 //noinspection GoUnusedExportedFunction
 func MonotonicTime() uint64 {
-	return C.monotonic_time()
+	var monoTime uint64
+	monoTime = C.monotonic_time()
+	return monoTime
 }
