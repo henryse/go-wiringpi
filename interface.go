@@ -318,13 +318,11 @@ func I2cRead(fd int) int {
 }
 
 //noinspection GoUnusedExportedFunction
-func MonotonicTime() C.ulonglong {
-	var nanoseconds C.ulonglong
-	C.monotonic_time()
-	return nanoseconds
+func MonotonicTime() uint64 {
+	return uint64(C.monotonic_time())
 }
 
 //noinspection GoUnusedExportedFunction
-func ConvertMonotonicTimeToUSec(time C.ulonglong) C.ulonglong {
+func ConvertMonotonicTimeToUSec(time uint64) uint64 {
 	return time / 1000
 }
