@@ -40,7 +40,6 @@ unsigned long long monotonic_time() {
 }
 */
 import "C"
-import "unsafe"
 
 import (
 	"fmt"
