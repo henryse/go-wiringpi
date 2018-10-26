@@ -112,6 +112,7 @@ import "C"
 import "unsafe"
 
 import (
+	"fmt"
 	"github.com/henryse/go-callback"
 	"sync"
 )
