@@ -183,8 +183,10 @@ func internalDigitalWrite(pin int, mode int) {
 }
 
 func internalDigitalRead(pin int) int {
-	println("internalDigitalRead")
-	return int(C.digitalRead(C.int(pin)))
+	value := int(C.digitalRead(C.int(pin)))
+
+	println("internalDigitalRead pin: %d = %d", pin, value)
+	return value
 }
 
 func internalGetMode(pin int) int {
