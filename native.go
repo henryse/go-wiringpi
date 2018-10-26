@@ -30,7 +30,6 @@ package wiringpi
 
 /*
 #cgo LDFLAGS: -lwiringPi
-#cgo CFLAGS: -O0
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
@@ -51,9 +50,22 @@ struct context {
 	int ret;
 };
 
+static void wrapper_pinMode(int p, int m) {
+    pinMode(p,m);
+}
+
+static void wrapper_digitalWrite(int p, int m) {
+    digitalWrite(p,m);
+}
+
+static int wrapper_digitalRead(int p) {
+    return digitalRead(p);
+}
+
 static void(*callback_func)(void (*f)(void*), void*);
 
 extern void goCallback(void *);
+
 
 GEN_INTERRUPTER(0)
 GEN_INTERRUPTER(1)
@@ -168,7 +180,7 @@ func internalSetupSys() int {
 }
 
 func internalPinMode(pin int, mode int) {
-	C.pinMode(C.int(pin), C.int(mode))
+	C.wrapper_pinMode(C.int(pin), C.int(mode))
 }
 
 func internalPullUpDnControl(pin int, pud int) {
@@ -180,11 +192,11 @@ func internalPwmWrite(pin int, value int) {
 }
 
 func internalDigitalWrite(pin int, mode int) {
-	C.digitalWrite(C.int(pin), C.int(mode))
+	C.wrapper_digitalWrite(C.int(pin), C.int(mode))
 }
 
 func internalDigitalRead(pin int) int {
-	value := int(C.digitalRead(C.int(pin)))
+	value := int(C.wrapper_digitalRead(C.int(pin)))
 
 	fmt.Printf("internalDigitalRead pin: %d = %d\n", pin, value)
 	return value
