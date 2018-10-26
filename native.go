@@ -185,7 +185,7 @@ func internalDigitalWrite(pin int, mode int) {
 func internalDigitalRead(pin int) int {
 	value := int(C.digitalRead(C.int(pin)))
 
-	println("internalDigitalRead pin: %d = %d", pin, value)
+	fmt.Printf("internalDigitalRead pin: %d = %d", pin, value)
 	return value
 }
 
