@@ -112,7 +112,6 @@ import "C"
 import "unsafe"
 
 import (
-	"github.com/henryse/go-callback"
 	"sync"
 )
 
@@ -183,6 +182,7 @@ func internalDigitalWrite(pin int, mode int) {
 }
 
 func internalDigitalRead(pin int) int {
+	println("internalDigitalRead")
 	return int(C.digitalRead(C.int(pin)))
 }
 
