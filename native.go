@@ -113,7 +113,6 @@ import "unsafe"
 
 import (
 	"github.com/henryse/go-callback"
-	"log"
 	"sync"
 )
 
