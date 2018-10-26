@@ -30,6 +30,7 @@ package wiringpi
 
 /*
 #cgo LDFLAGS: -lwiringPi
+#cgo CFLAGS: -O0
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
@@ -111,7 +112,6 @@ import "C"
 import "unsafe"
 
 import (
-	"github.com/henryse/go-callback"
 	"sync"
 )
 
